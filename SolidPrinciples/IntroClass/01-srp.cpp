@@ -50,7 +50,6 @@ private:
     double second_;
 public:
     StudentResult(double first, double second) : first_{first}, second_{second} {
-
     }
 
     double average() const {
