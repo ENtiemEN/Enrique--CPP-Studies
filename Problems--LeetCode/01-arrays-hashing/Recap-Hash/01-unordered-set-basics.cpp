@@ -38,6 +38,7 @@ int main(){
     Un `unordered_set` no garantiza el orden de los elementos
 
     `numbers.begin()` -> devuelve un iterador al primer elemento
+
     `numbers.end()` -> devuelve un interador a la posición posterior al último elemento OJO: Apunta a la posición donde no hay ningún elemento. (Por eso nunca debes hacer `*numbers.end()`)
     */
 
@@ -52,9 +53,8 @@ int main(){
         std::cout << "20 existe\n";
     }
 
-    // 3. Busca y obtener un ITERADOR (que representa la posición posterior al último elemento del contenedor)
-    // El iterador apunta al elemento econtrado.
-    // Caso B -> No ecuenta el elemento : Devuelve `numbers.end()`
+    // 3. BUSCAR: devuelve un iterador al elemento encontrado.
+    // si no existe, devuelve `numbers.end()`
     const auto it = numbers.find(30);
 
     if(it != numbers.end()){
@@ -62,6 +62,33 @@ int main(){
     }
 
     // 4. ELIMINAR POR VALOR    
+    const auto removed = numbers.erase(10);
+
+    std::cout << "Eliminados: " << removed << '\n'; // 1
+
+    // 5. RECORRER
+    // El ORDEN de impresión NO ESTÁ GARANTIZADO
+    for(const int value : numbers){
+        std::cout << value << ' ';
+    }
+    std::cout << '\n';
+
+    std::cout << "--- --- --- --- --- ---\n";
+    // Aclaración
+    std::unordered_set<float> prices{11.4, 16.5, 17.8};
+
+    const auto iter = prices.insert(20.0);
+    
+
+    std::cout << std::boolalpha << "Insertado (" << iter.second << ")" << '\n';
+
+    std::cout << "Valor insertado: " << *(iter.first) << '\n';
+
+    const auto [iterador, flag] = prices.insert(10.0);
+
+    std::cout << std::boolalpha << "Insertado (" << flag << ")" << '\n';
+    
+    std::cout << "Valor insertado: " << *iterador << '\n';
 
     return 0;
 }
