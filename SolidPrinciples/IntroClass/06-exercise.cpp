@@ -25,6 +25,10 @@ Las notificaciones se simulan mediante mensajes. El ejempo supone que el pedido 
 #include <ostream>
 #include <string>
 
+#include <cmath> // -> std::isfinite()
+#include <algorithm> // -> std::max()
+#include <stdexcept> // -> std::invalid_argument
+
 // Datos del resultado de confirmar un pedido.
 struct Receipt {
     int orderId;
@@ -34,14 +38,23 @@ struct Receipt {
 
 // === DESCUENTOS ===
 
-/* LSP: contrato para todas las implementaciones.
+/*
+LSP: Todas las implementaciones de Discount deben respetar
+el mismo contrato:
 
 Precondición:
-    price finito, >=0
+- price debe ser finito y mayor o igual a cero.
+
 Poscondición:
-    El resultado es finito y cumple:
-    0 <= resultado <= pricec
+- El resultado debe ser finito.
+- 0 <= resultado <= price.
+
+Cualquier implementación debe cumplir estas condiciones
+para poder sustituir a otra sin romper el comportamiento.
 */
+
+
+// OCP: Discount permite extender los tipos de descuentos mediante nuevas implementaciones sin modificar las clases existentes ni `OrderService`
 class Discount{
 public:
     virtual ~Discount() = default;
@@ -66,7 +79,8 @@ public:
 
 // ===  NOTIFICACIONES ===
 
-// ISP: notificar es una capacidad INDEPENDIENTE de imprimir
+// ISP: Define exclusivamente la capacidad de enviar notificaciones. No obliga a sus implementaciones a proporcionar impresión de comprobantes
+
 class Notifier{
 public:
     virtual ~Notifier() = default;
@@ -90,6 +104,8 @@ public:
 };
 
 // === PRESENTACIÓN DE COMPROBANTES ===
+
+// ISP: Define exclusivamente la capacidad de presentar comprobantes. NO obliga a sus implementaciones a proporcionarnotificaciones
 
 class ReceiptPrinter {
 public:
@@ -122,7 +138,7 @@ void printReceipt(
 // === SERVICIO DE APLICACION ===
 
 // SRP: coordina la confirmación
-// DIP: depende de abstracciones para descuento y notificación.
+// DIP: OrderService es un módulo de alto nivel que depende de las abstracciones Discount y Notifier, no de implementaciones concretas como (e.g.) PercentageDiscount, FixedDiscount, EmailNotifier o SmsNotifier
 
 class OrderService{
 private:
@@ -193,3 +209,16 @@ int main(){
 
     return 0;
 }
+
+/*  Recordar
+
+SRP: ¿Cuántas responsabilidades tiene esta clase?
+
+OCP: ¿Puedo agregar funcionalidades sin modificar código existente?
+
+LSP: ¿Puedo sustituir una implementación por otra sin romper el contrato?
+
+ISP: ¿Estoy obligando a una clase a depender de métodos que no necesita?
+
+DIP: ¿Las clases de alto nivel dependen de abstracciones o de implementaciones concretas?
+*/

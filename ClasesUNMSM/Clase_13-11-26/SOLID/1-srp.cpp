@@ -1,5 +1,5 @@
 // SOLID
-// S (srp) O (ocr) L (lsp) I (isp) D (dip)
+// S (srp) O (ocp) L (lsp) I (isp) D (dip)
 
 // SRP -- Single Responsability Principle
 // Una clase debe tener un motivo de cambio
