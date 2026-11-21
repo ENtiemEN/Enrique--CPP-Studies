@@ -20,11 +20,26 @@ Buscamos si existen indices distintos tales que:
 #include <iostream>
 
 #include <unordered_set>
+#include <set>
 
-/*
-T(n) = O(n^2)
-S_aux(n) = O(1)
+/*  ANALISIS DE ALGORITMOS - Teoría
+Big O --> O(f(n)), describe cómo crece el costo de un algoritmo a medida que aumente el tamaño de la entrada.
+
+Se utiliza para analizar dos dimensiones:
+Tipo de complejidad     ¿Qué mide?
+
+'Time Complexity'       cómo crece el tiempo de ejecución
+
+'Space Complexity'      cómo crece el espacio de memoria utilizada
+
+e.g.
+- 'O(n) temporal' i.e. el trabajo del algoritmo crece linealmente respecto al tamaño de la entrada.
+- 'O(n) espacial' i.e. la memoria adicional utilizada crece linealmente respecto al tamaño de la entrada
+
+IMPORTANTE: 
+Big O expresa una cota asintótica superior, no necesariamente el tiempo o memoria exactos
 */
+
 bool containsDuplicateBruteForce(const std::vector<int>& values){
     if(values.size() < 2){
         return false;
@@ -39,9 +54,23 @@ bool containsDuplicateBruteForce(const std::vector<int>& values){
     }
     return false;
 }
+/*  Análisis del algoritmo
+Complejidad temporal:
+- O(n^2) -- tiene dos bucles anidados
+- En el peor caso, comparas una cantidad cuadrática de pares de elementos
+
+Complejidad espacial auxiliar:
+- O(1) -- utilizas únicamente unas pocas variables (i, j), independientemente del tamaño de la entrada
+
+---
+
+Time Complexity: O(n^2)
+Auxiliary Space Complexity: O(1)
+*/
+
 
 /*
-Idea de Solución
+OTRA de Solución
 
 Número actual   Número que ya vimos
 1                   
@@ -85,9 +114,57 @@ bool containsDuplicate(const std::vector<int>& values){
 
     return false;
 }
-/*  Análisis:
-Tiempo O(n^2)
-Espacio O(n)
+/*  Análisis del algoritmo
+
+Complejidad Temporal:
+- O(n) promedio: recorres el vector una vez y cada inserción en `unordered_set` tiene un costo de O(1)
+- O(n^2) peor caso: las operaciones de inserción pueden degradarse por colisiones hash.
+
+Complejidad espacial auxiliar:
+- O(n): en el peor caso, el `unordered_set` almacena los n elmentos porque todos son distintos.
+
+---
+Time Complexity:
+- Average: O(n)
+- Worst: O(n^2)
+
+Auxiliary Space Complexity: O(n)
+*/
+
+bool containsDuplicate_set(const std::vector<int>& values){
+    std::set <int> seen;
+
+    for(const int value : values){
+        const auto [it, inserted] = seen.insert(value);
+
+        if(!inserted){
+            return true;
+        }
+    }
+    
+    return false;
+}
+/*  Análisis del algoritmo
+Complejidad temporal:
+`std::set` garantiza inserciones de costo O(log(k+1)), donde k es la cantidad de elementos almacenados antes de insertar.
+
+0
+1
+2
+...
+n-1
+
+Si lo n valores son distintos
+T(n) = O(∑_{k=0}^{n-1} log(k+1)) = O(log(n!))
+Donde n! <= n^n
+-> log(n!) <= log(n^n)
+
+T(n) = O(nlogn)
+i.e T(n) ∈ O(nlogn)
+
+Complejidad espacial auxiliar:
+Si todos son distintos, `seen` almacena los n elementos:
+S_aux(n) = O(n)
 */
 
 int main(){
@@ -103,11 +180,27 @@ int main(){
     std::cout << containsDuplicateBruteForce(unique) << '\n';
     std::cout << containsDuplicateBruteForce(empty) << '\n';
 
-    std::cout << "Unordered Set:\n";
+    std::cout << "\nUnordered Set:\n";
 
     std::cout << containsDuplicate(repeated) << '\n';
     std::cout << containsDuplicate(unique) << '\n';
     std::cout << containsDuplicate(empty) << '\n';
 
+    std::cout << "\nOrdered Set:\n";
+    std::cout << containsDuplicate_set(repeated) << '\n';
+    std::cout << containsDuplicate_set(unique) << '\n';
+    std::cout << containsDuplicate_set(empty) << '\n';
+
+
     return 0;
 }
+
+/*  NOTACIONES ASINTÓTICAS (Asymptotic Notations)
+
+O   Big O       Cota superior asintótica
+Ω   Big Omega   Cota inferior asintótica
+Θ   Big Theta   Cota ajustada sintética
+
+o   Little O        Cota superior asintótica estricta
+ω   Litlle Omega    Cota ingerior asintótica estricta
+*/
